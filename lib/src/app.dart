@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'auth.dart';
+import 'common.dart';
 import 'routing.dart';
 import 'widgets/navigator.dart';
 
@@ -89,6 +91,12 @@ class _PoliisiautoAppState extends State<PoliisiautoApp> {
                 },
               ),
             ),
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              AppLocalizations.delegate,
+            ],
           ),
         ),
       );

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
 import '../auth.dart';
+import '../common.dart';
 import '../routing.dart';
 import '../data.dart';
 import 'forgot_password.dart';

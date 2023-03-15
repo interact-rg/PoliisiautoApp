@@ -1,0 +1,6 @@
+{
+  "helloWorld": "Hello World suomeksi!",
+  "@helloWorld": {
+    "description": "Perinteinen vastasyntyneen ohjelmoijan tervehdys"
+  }
+}
