@@ -6,7 +6,10 @@
 
 import 'package:flutter/material.dart';
 
+import '../../locale/app_localization.dart';
 import '../auth.dart';
+import '../common.dart';
+import '../locale_provider.dart';
 import '../widgets/drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -17,46 +20,71 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  Locale? selectedLocale;
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Asetukset')),
-        drawer: const PoliisiautoDrawer(),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: double.infinity),
-                child: const SettingsContent(),
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedLocale = Localizations.localeOf(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.settings)),
+      drawer: const PoliisiautoDrawer(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: double.infinity),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(AppLocalizations.of(context)!.mySettings,
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Kieli',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButton<Locale>(
+                      value: selectedLocale,
+                      onChanged: (Locale? newValue) async {
+                        setState(() {
+                          selectedLocale = newValue;
+                        });
+                        // print("TÄS:" + selectedLocale.toString())
+                        LocaleProvider.of(context)!.setLocale(selectedLocale!);
+                      },
+                      items: AppLocalization.supportedLocales
+                          .map<DropdownMenuItem<Locale>>((Locale locale) {
+                        return DropdownMenuItem<Locale>(
+                          value: locale,
+                          child: Text(locale.languageCode),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.logout_outlined),
+                      onPressed: () {
+                        PoliisiautoAuthScope.of(context).signOut();
+                      },
+                      label: const Text('Kirjaudu ulos'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      );
-}
-
-class SettingsContent extends StatelessWidget {
-  const SettingsContent({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          ...[
-            Text(
-              'Minun asetukset',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const Text('Ei vielä implementoitu.'),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.logout_outlined),
-              onPressed: () {
-                PoliisiautoAuthScope.of(context).signOut();
-              },
-              label: const Text('Kirjaudu ulos'),
-            ),
-          ].map((w) => Padding(padding: const EdgeInsets.all(8), child: w)),
-        ],
-      );
+      ),
+    );
+  }
 }
