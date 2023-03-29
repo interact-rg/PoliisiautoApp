@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
 import '../auth.dart';
+import '../common.dart';
 import '../widgets/drawer.dart';
 import 'send_emergency_report.dart';
 
@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Etusivu')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.frontpage)),
         drawer: const PoliisiautoDrawer(),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _openEmergencyReportScreen(context),
-          tooltip: 'Tee hätäilmoitus',
+          tooltip: AppLocalizations.of(context)!.emergencyReport,
           backgroundColor: Colors.red,
           child: const Icon(Icons.support_outlined),
         ),
@@ -44,21 +44,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool? sure = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text(
-                  'Oletko varma että haluat lähettää hätäilmoituksen?'),
-              content: const Text(
-                  'Kun teet hätäilmoituksen, lähimmät aikuiset saavat ilmoituksen, jossa näkyy nimesi, sijaintisi ja muuta tietoa.'),
+              title: Text(AppLocalizations.of(context)!.emergencyNotification),
+              content: Text(AppLocalizations.of(context)!.emergencyInfo),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Peruuta'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text(
-                    'Olen varma',
-                    style: TextStyle(color: Colors.red),
-                  ),
+                  child: Text(AppLocalizations.of(context)!.sure),
                 ),
               ],
             ));
@@ -88,11 +83,13 @@ class HomeContent extends StatelessWidget {
               ),
             ),
             Text(
-              'Tervetuloa, ${getAuth(context).user!.name}!',
+              AppLocalizations.of(context)!
+                  .pageHomeTitle
+                  .replaceAll('{userName}', getAuth(context).user!.name),
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const Text(
-              'Tähän tulee esimerkiksi organisaatiokohtaista sisältöä, joka voi muuttua päivittäin.',
+            Text(
+              AppLocalizations.of(context)!.homePagePlaceholder,
               textAlign: TextAlign.center,
             ),
             const Divider(),
@@ -101,7 +98,7 @@ class HomeContent extends StatelessWidget {
               onPressed: () {
                 PoliisiautoAuthScope.of(context).signOut();
               },
-              label: const Text('Kirjaudu ulos'),
+              label: Text(AppLocalizations.of(context)!.logout),
             ),
           ].map((w) => Padding(padding: const EdgeInsets.all(8), child: w)),
         ],

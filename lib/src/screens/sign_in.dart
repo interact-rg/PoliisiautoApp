@@ -49,30 +49,33 @@ class _SignInScreenState extends State<SignInScreen> {
                           width: 120, child: Image.asset('assets/logo-2x.png')),
                       const SizedBox(height: 20),
                       Text(
-                        'Kirjaudu sisään',
+                        AppLocalizations.of(context)!.signin,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Anna sähköpostiosoite';
+                            return AppLocalizations.of(context)!.giveEmail;
                           }
                           return null;
                         },
-                        decoration:
-                            const InputDecoration(labelText: 'Sähköposti'),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.email,
+                        ),
                         controller: _emailController,
                         key: const ValueKey("e-mail"),
                       ),
+
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Anna salasana';
+                            return AppLocalizations.of(context)!.givePassword;
                           }
                           return null;
                         },
-                        decoration:
-                            const InputDecoration(labelText: 'Salasana'),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.password,
+                        ),
                         obscureText: true,
                         controller: _passwordController,
                         key: const ValueKey("password"),
@@ -92,28 +95,33 @@ class _SignInScreenState extends State<SignInScreen> {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        title: const Text(
-                                            'Kirjautuminen epäonnistui!'),
-                                        content: const Text(
-                                            'Varmista että kirjoitit sähköpostin ja salasanan oikein.'),
+                                        title: Text(
+                                            AppLocalizations.of(context)!
+                                                .loginFailed),
+                                        content: Text(
+                                            AppLocalizations.of(context)!
+                                                .checkEmailAndPassword),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: const Text('Selvä'),
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .alright),
                                           ),
                                         ],
                                       ));
                             }
                           },
-                          child: const Text('Kirjaudu'),
+                          child: Text(AppLocalizations.of(context)!.signin),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(0),
                         child: TextButton(
                           onPressed: () => _openForgotPasswordScreen(context),
-                          child: const Text('Unohtuiko salasana?'),
+                          child: Text(
+                              AppLocalizations.of(context)!.forgotPassword),
                         ),
                       ),
 
