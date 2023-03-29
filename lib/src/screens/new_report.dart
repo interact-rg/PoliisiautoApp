@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
 import 'package:poliisiauto/src/auth.dart';
+import '../common.dart';
 import '../data.dart';
 import '../api.dart';
 
@@ -28,10 +28,10 @@ Widget buildDescriptionField(
         }
         return null;
       },
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         icon: Icon(Icons.speaker_notes_outlined),
-        hintText: 'Kerro omin sanoin mitä tapahtui',
-        labelText: 'Mitä tapahtui?',
+        hintText: AppLocalizations.of(context)!.tellWhatHappened,
+        labelText: AppLocalizations.of(context)!.whatHappened,
       ),
       key: const ValueKey("Description"),
     );
@@ -60,10 +60,10 @@ Widget buildBullyField(BuildContext context, List<User> bullyOptions,
               validator: (value) {
                 return null;
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 icon: Icon(Icons.person_outline),
                 hintText: 'Kirjoita kiusaajan nimi',
-                labelText: 'Kuka kiusasi? (valinnainen)',
+                labelText: AppLocalizations.of(context)!.whoBullied,
                 counterText: '',
               ),
               key: const ValueKey("Bully"),
@@ -74,9 +74,9 @@ Widget buildBullyField(BuildContext context, List<User> bullyOptions,
 Widget buildBulliedWasNotMeField(
         BuildContext context, bool state, ValueSetter<bool?> onChanged) =>
     CheckboxListTile(
-      title: const Padding(
+      title: Padding(
           padding: EdgeInsets.only(left: 24),
-          child: Text('Kiusattu oli joku muu kuin minä')),
+          child: Text(AppLocalizations.of(context)!.bulliedPerson)),
       value: state,
       onChanged: onChanged,
       key: const ValueKey("BulliedCheckbox"),
@@ -107,10 +107,10 @@ Widget buildBulliedField(BuildContext context, List<User> bulliedOptions,
               validator: (value) {
                 return null;
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 icon: Icon(Icons.person_outline),
                 hintText: 'Kirjoita kiusatun nimi',
-                labelText: 'Ketä kiusattiin? (valinnainen)',
+                labelText: AppLocalizations.of(context)!.whoWasBullied,
                 counterText: '',
               ),
               key: const ValueKey("Bullied"),
@@ -127,10 +127,10 @@ Widget buildHandlerField(BuildContext context, List<User> handlerOptions,
           child: Text(option.name),
         );
       }).toList(),
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         icon: Icon(Icons.person_outline),
         hintText: 'Valitse opettaja',
-        labelText: 'Kenelle haluat lähettää ilmoituksen?',
+        labelText: AppLocalizations.of(context)!.sendNotificationWho,
         counterText: '',
       ),
       key: const ValueKey("SendTo"),
@@ -140,9 +140,9 @@ Widget buildHandlerField(BuildContext context, List<User> handlerOptions,
 Widget buildAnonymousField(
         BuildContext context, bool state, ValueSetter<bool?> onChanged) =>
     CheckboxListTile(
-      title: const Padding(
+      title: Padding(
           padding: EdgeInsets.only(left: 24),
-          child: Text('En halua että opettaja tietää nimeni')),
+          child: Text(AppLocalizations.of(context)!.noName)),
       value: state,
       onChanged: onChanged,
       key: const ValueKey("AnonCheckbox"),
@@ -193,7 +193,7 @@ class _NewReportScreenState extends State<NewReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Tee ilmoitus')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.makeReport)),
         resizeToAvoidBottomInset: false,
         body: FutureBuilder<Map<String, List<User>>>(
             future: _options,
@@ -241,7 +241,7 @@ class _NewReportScreenState extends State<NewReportScreen> {
                                   // Process data.
                                   _submitForm();
                                 },
-                                child: const Text('Lähetä'),
+                                child: Text(AppLocalizations.of(context)!.send),
                               ),
                             ),
                           ),
