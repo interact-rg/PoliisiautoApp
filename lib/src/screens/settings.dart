@@ -4,9 +4,6 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
-
-import '../../locale/app_localization.dart';
 import '../auth.dart';
 import '../common.dart';
 import '../locale_provider.dart';
@@ -59,10 +56,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         setState(() {
                           selectedLocale = newValue;
                         });
-                        // print("TÄS:" + selectedLocale.toString())
                         LocaleProvider.of(context)!.setLocale(selectedLocale!);
                       },
-                      items: AppLocalization.supportedLocales
+                      items: LocaleProvider.supportedLocales
                           .map<DropdownMenuItem<Locale>>((Locale locale) {
                         return DropdownMenuItem<Locale>(
                           value: locale,

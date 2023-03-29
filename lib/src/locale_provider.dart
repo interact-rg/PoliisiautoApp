@@ -11,6 +11,11 @@ class LocaleProvider extends StatefulWidget {
   static _LocaleProviderState? of(BuildContext context) {
     return context.findAncestorStateOfType<_LocaleProviderState>();
   }
+
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en', ''),
+    Locale('fi', '')
+  ];
 }
 
 class _LocaleProviderState extends State<LocaleProvider> {
