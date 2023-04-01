@@ -25,7 +25,6 @@ class _LocaleProviderState extends State<LocaleProvider> {
     setState(() {
       _locale = locale;
     });
-    print("TÄSSÄ ON LOCALE: " + _locale.toString());
   }
 
   Locale? get locale => _locale;
