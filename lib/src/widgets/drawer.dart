@@ -32,7 +32,7 @@ class PoliisiautoDrawer extends StatelessWidget {
               color: Color.fromARGB(255, 32, 112, 232),
             ),
             child: Text(
-              'Hei ${getAuth(context).user!.name}!',
+              '${AppLocalizations.of(context)!.hi} ${getAuth(context).user!.name}!',
               style: const TextStyle(color: Colors.white),
               textScaleFactor: 1.5,
               textAlign: TextAlign.center,
