@@ -46,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     Text(
-                      'Kieli',
+                      AppLocalizations.of(context)!.language,
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     const SizedBox(height: 8),
@@ -62,7 +62,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           .map<DropdownMenuItem<Locale>>((Locale locale) {
                         return DropdownMenuItem<Locale>(
                           value: locale,
-                          child: Text(locale.languageCode),
+                          child: locale.languageCode == 'fi'
+                              ? Text(AppLocalizations.of(context)!.fi)
+                              : Text(AppLocalizations.of(context)!.en),
                         );
                       }).toList(),
                     ),
@@ -72,7 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onPressed: () {
                         PoliisiautoAuthScope.of(context).signOut();
                       },
-                      label: const Text('Kirjaudu ulos'),
+                      label: Text(AppLocalizations.of(context)!.logout),
                     ),
                   ],
                 ),
