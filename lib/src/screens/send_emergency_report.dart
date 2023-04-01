@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
+import '../common.dart';
 
 class SendEmergencyReportScreen extends StatefulWidget {
   const SendEmergencyReportScreen({
@@ -19,7 +19,9 @@ class SendEmergencyReportScreen extends StatefulWidget {
 class _SendEmergencyReportScreenState extends State<SendEmergencyReportScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Lähetetään hätäilmoitusta')),
+        appBar: AppBar(
+            title: Text(
+                AppLocalizations.of(context)!.sendingEmergencyNotification)),
         body: Center(
           child: Container(
             padding: const EdgeInsets.all(0),
@@ -28,7 +30,8 @@ class _SendEmergencyReportScreenState extends State<SendEmergencyReportScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18.0),
-                  child: Text('Hätäilmoitus on lähetetty lähimmille aikuisille',
+                  child: Text(
+                      AppLocalizations.of(context)!.emergencyIsSendAdult,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium),
                 ),
@@ -49,13 +52,14 @@ class _SendEmergencyReportScreenState extends State<SendEmergencyReportScreen> {
                             size: 40,
                           ),
                           const SizedBox(height: 16.0),
-                          const Text(
-                            'Jos mahdollista, yritä irtautua tilanteesta.',
+                          Text(
+                            AppLocalizations.of(context)!
+                                .disengageFromSituation,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8.0),
-                          const Text(
-                            'Etsi läheltäsi luotettava aikuinen, kuten opettaja tai koulukuraattori.',
+                          Text(
+                            AppLocalizations.of(context)!.findAdult,
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -73,7 +77,8 @@ class _SendEmergencyReportScreenState extends State<SendEmergencyReportScreen> {
                     child: ElevatedButton.icon(
                         icon: const Icon(Icons.keyboard_voice_outlined),
                         onPressed: () => _onSendAudio(context),
-                        label: const Text('Lähetä ääniviesti')),
+                        label: Text(
+                            AppLocalizations.of(context)!.sendVoiceMessage)),
                   ),
                 ),
                 Padding(
@@ -84,12 +89,13 @@ class _SendEmergencyReportScreenState extends State<SendEmergencyReportScreen> {
                     child: ElevatedButton.icon(
                         icon: const Icon(Icons.videocam),
                         onPressed: () => _onSendVideo(context),
-                        label: const Text('Lähetä videokuvaa')),
+                        label:
+                            Text(AppLocalizations.of(context)!.sendVideoImage)),
                   ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Lopeta lähetys'),
+                  child: Text(AppLocalizations.of(context)!.stopSending),
                 ),
               ],
             ),
