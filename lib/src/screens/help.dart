@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
+import '../common.dart';
 import '../widgets/drawer.dart';
 import '../data.dart';
 import '../api.dart';
@@ -19,7 +19,7 @@ class HelpScreen extends StatefulWidget {
 class _HelpScreenState extends State<HelpScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text('Apua')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.help)),
       drawer: const PoliisiautoDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -60,11 +60,12 @@ class _HelpContentState extends State<HelpContent> {
         children: [
           ...[
             Text(
-              'Apusivut',
+              AppLocalizations.of(context)!.helpPages,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const Text(
-              'Tälle sivulle voidaan hakea organisaation omia linkkejä, sekä muuta sisältöä.',
+            const Divider(),
+            Text(
+              AppLocalizations.of(context)!.helpInfoText,
               textAlign: TextAlign.center,
             ),
             const Divider(),
@@ -75,7 +76,7 @@ class _HelpContentState extends State<HelpContent> {
               if (snapshot.hasData) {
                 return Text(
                     textAlign: TextAlign.center,
-                    'Organisaatio: ${snapshot.data!.name}\n${snapshot.data!.completeAddress}');
+                    '${AppLocalizations.of(context)!.organization}: ${snapshot.data!.name}\n${snapshot.data!.completeAddress}');
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
