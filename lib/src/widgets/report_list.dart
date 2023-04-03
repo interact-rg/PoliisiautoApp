@@ -3,8 +3,7 @@
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
-
-import 'package:flutter/material.dart';
+import '../common.dart';
 import '../auth.dart';
 import '../data.dart';
 import '../api.dart';
@@ -101,11 +100,11 @@ class _ReportListState extends State<ReportList> {
                     leading: widget.showIds
                         ? Text('#${snapshot.data?[index].id}')
                         : null,
-                    title: Text(
-                        snapshot.data?[index].description ?? '(Ei kuvausta)'),
+                    title: Text(snapshot.data?[index].description ??
+                        AppLocalizations.of(context)!.noDescription),
                     subtitle: snapshot.data?[index].reporterName != null
                         ? Text(snapshot.data?[index].reporterName ?? '')
-                        : const Text('Nimetön'),
+                        : Text(AppLocalizations.of(context)!.anonymous),
                     onTap: (widget.onTap != null)
                         ? () => widget.onTap!(snapshot.data![index])
                         : null,
