@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class LocaleProvider extends StatefulWidget {
   final Widget child;
 
-  LocaleProvider({required this.child});
+  const LocaleProvider({super.key, required this.child});
 
   @override
   _LocaleProviderState createState() => _LocaleProviderState();

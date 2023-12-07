@@ -66,5 +66,6 @@
   "whoBullied": "Kuka kiusasi? (valinnainen)",
   "whoWasBullied": "Ketä kiusattiin? (valinnainen)",
   "writeMessage": "Kirjoita viesti",
-  "you": "Sinä"
+  "you": "Sinä",
+  "sendThisReport": "Lähetetäänkö tämä ilmoitus"
 }

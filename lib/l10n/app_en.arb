@@ -66,5 +66,6 @@
   "whoBullied": "Who bullied? (optional)",
   "whoWasBullied": " Who was bullied? (optional)",
   "writeMessage": "Write a message",
-  "you": "You"
+  "you": "You",
+  "sendThisReport": "Do we send this report"
 }
