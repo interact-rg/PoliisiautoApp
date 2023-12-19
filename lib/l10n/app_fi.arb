@@ -10,6 +10,7 @@
   "bulliedPerson": "Kiusattu oli joku muu kuin minä",
   "bully": "Kiusaaja",
   "cancel": "Peruuta",
+  "cantLeaveEmpty": "Et voi jättää tätä kohtaa tyhjäksi!",
   "checkEmailAndPassword": "Varmista että kirjoitit sähköpostin ja salasanan oikein.",
   "createdByMe": "Minun luomat",
   "disengageFromSituation": "Jos mahdollista, yritä irtautua tilanteesta.",

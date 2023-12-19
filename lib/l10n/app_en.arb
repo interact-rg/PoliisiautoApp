@@ -10,6 +10,7 @@
   "bulliedPerson": "The person being bullied was someone other than me",
   "bully": "Bully",
   "cancel": "Cancel",
+  "cantLeaveEmpty": "You cannot leave this field empty!",
   "checkEmailAndPassword": "Make sure you typed the email and password correctly.",
   "createdByMe": " Created by me",
   "disengageFromSituation": "If possible, try to disengage from the situation.",

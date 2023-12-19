@@ -54,6 +54,9 @@ dependencies:
     sdk: flutter
   intl: any
 
+  #speech-to-text
+  speech_to_text: ^6.5.1
+
 dev_dependencies:
   integration_test:
     sdk: flutter

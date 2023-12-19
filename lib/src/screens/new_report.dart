@@ -8,33 +8,15 @@ import 'package:poliisiauto/src/auth.dart';
 import '../common.dart';
 import '../data.dart';
 import '../api.dart';
+import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:speech_to_text/speech_recognition_result.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Form field sub-builders
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Description: Text field
-Widget buildDescriptionField(
-        BuildContext context, TextEditingController controller) =>
-    TextFormField(
-      controller: controller,
-      autofocus: false,
-      maxLength: 1000,
-      minLines: 3,
-      maxLines: 10,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Tätä kenttää ei voi jättää tyhjäksi';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        icon: const Icon(Icons.speaker_notes_outlined),
-        hintText: AppLocalizations.of(context)!.tellWhatHappened,
-        labelText: AppLocalizations.of(context)!.whatHappened,
-      ),
-      key: const ValueKey("Description"),
-    );
 
 /// Bully: Text field with autocomplete
 Widget buildBullyField(BuildContext context, List<User> bullyOptions,
@@ -54,7 +36,7 @@ Widget buildBullyField(BuildContext context, List<User> bullyOptions,
       fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) =>
           TextFormField(
         controller: controller,
-        focusNode: focusNode,
+        keyboardType: TextInputType.name,
         onEditingComplete: onFieldSubmitted,
         maxLength: 100,
         validator: (value) {
@@ -165,9 +147,13 @@ class _NewReportScreenState extends State<NewReportScreen> {
   final _formKey = GlobalKey<FormState>();
 
   /// Form fields
-  final _descriptionController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   final _bullyController = TextEditingController();
   final _bulliedController = TextEditingController();
+
+  final stt.SpeechToText _speechToText = stt.SpeechToText();
+  bool _speechEnabled = false;
+  String _lastWords = '';
 
   User? _selectedHandler;
   bool _bulliedWasNotMe = false;
@@ -182,6 +168,7 @@ class _NewReportScreenState extends State<NewReportScreen> {
     _selectedHandler = null;
     _bulliedWasNotMe = false;
     _isAnonymous = false;
+    _initSpeech();
 
     _options = Future.delayed(Duration.zero, () => _fetchOptions());
   }
@@ -193,6 +180,42 @@ class _NewReportScreenState extends State<NewReportScreen> {
 
     temp['teachers']!.insert(0, dummyTeacher);
     return temp;
+  }
+
+  Future<void> _initSpeech() async {
+    _speechEnabled = await _speechToText.initialize();
+    if (_speechEnabled) {
+      // Speech-to-text initialized successfully
+      setState(() {});
+    } else {
+      // Speech-to-text initialization failed
+      print('Speech-to-text initialization failed.');
+    }
+  }
+
+  /// Each time to start a speech recognition session
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {});
+  }
+
+  /// Manually stop the active speech recognition session
+  /// Note that there are also timeouts that each platform enforces
+  /// and the SpeechToText plugin supports setting timeouts on the
+  /// listen method.
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {});
+  }
+
+  /// This is the callback that the SpeechToText plugin calls when
+  /// the platform returns recognized words.
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      _descriptionController.text =
+          _lastWords; // Set recognized words to the controller
+    });
   }
 
   int currentStep = 0;
@@ -228,6 +251,45 @@ class _NewReportScreenState extends State<NewReportScreen> {
       currentStep = value;
     });
   }
+
+  Widget buildDescriptionField(
+          BuildContext context, TextEditingController controller) =>
+      Column(
+        children: [
+          TextFormField(
+            keyboardType: TextInputType.name,
+            controller: controller,
+            autofocus: false,
+            maxLength: 1000,
+            minLines: 3,
+            maxLines: 10,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return AppLocalizations.of(context)!.cantLeaveEmpty;
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              icon: const Icon(Icons.speaker_notes_outlined),
+              hintText: AppLocalizations.of(context)!.tellWhatHappened,
+              labelText: AppLocalizations.of(context)!.whatHappened,
+            ),
+            key: const ValueKey("Description"),
+            onEditingComplete: () {
+              // This function will be called when the user presses "Enter" on the keyboard
+              FocusScope.of(context).unfocus(); // Close the keyboard
+            },
+          ),
+          FloatingActionButton(
+            onPressed:
+                // If not yet listening for speech start, otherwise stop
+                _speechToText.isNotListening ? _startListening : _stopListening,
+            tooltip: 'Listen',
+            child:
+                Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+          ),
+        ],
+      );
 
   Widget controlBuilders(context, details) {
     return Padding(

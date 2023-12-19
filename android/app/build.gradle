@@ -52,7 +52,7 @@ android {
 
         // NOTE: flutter_secure_storage requires Android SDK >= 18
         //       Otherwise we could use: minSdkVersion flutter.minSdkVersion
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
