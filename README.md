@@ -38,6 +38,10 @@ as http://localhost:8080 or http://poliisiauto.local. After these steps, you can
 | Sign out -button hard to find  | Make it visible in frontpage                                      | Made it visible in frontpage                                 |
 | Visual outlook could be better |                                                                   |                                                              |
 
+## Overview of application
+
+![Overview of the application](poliisiapp.png)
+
 
 ## License
 
