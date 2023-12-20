@@ -37,7 +37,11 @@ Widget buildBullyField(BuildContext context, List<User> bullyOptions,
           TextFormField(
         controller: controller,
         keyboardType: TextInputType.name,
-        onEditingComplete: onFieldSubmitted,
+            onEditingComplete: () {
+              onFieldSubmitted();
+              // Unfocus the current focus when editing is complete
+              FocusScope.of(context).unfocus();
+            },
         maxLength: 100,
         validator: (value) {
           return null;
@@ -226,7 +230,7 @@ class _NewReportScreenState extends State<NewReportScreen> {
         !_formKey.currentState!.validate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Cannot leave description empty'),
+            content: Text(AppLocalizations.of(context)!.cantLeaveEmpty),
           ),
         );
         return;
@@ -274,7 +278,7 @@ class _NewReportScreenState extends State<NewReportScreen> {
               hintText: AppLocalizations.of(context)!.tellWhatHappened,
               labelText: AppLocalizations.of(context)!.whatHappened,
             ),
-            key: const ValueKey("Description"),
+            key: ValueKey(AppLocalizations.of(context)!.description),
             onEditingComplete: () {
               // This function will be called when the user presses "Enter" on the keyboard
               FocusScope.of(context).unfocus(); // Close the keyboard
@@ -422,8 +426,8 @@ class _NewReportScreenState extends State<NewReportScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    "Lähetetäänkö tämä ilmoitus",
+                                  Text(
+                                    AppLocalizations.of(context)!.shouldWeSend,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -435,8 +439,8 @@ class _NewReportScreenState extends State<NewReportScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  const Text(
-                                    'Kuvaus: ',
+                                  Text(
+                                    AppLocalizations.of(context)!.description,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -446,25 +450,25 @@ class _NewReportScreenState extends State<NewReportScreen> {
                                   ),
                                   const SizedBox(
                                       height: 8), // Some vertical spacing
-                                  const Text(
-                                    'Lähetetään henkilölle: ',
+                                  Text(
+                                    AppLocalizations.of(context)!.receiver,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
-                                    '${_selectedHandler?.name ?? 'Ei valittua henkilöä'}',
+                                    '${_selectedHandler?.name ?? AppLocalizations.of(context)?.notReported}',
                                   ),
                                   const SizedBox(
                                       height: 8), // Some vertical spacing
-                                  const Text(
-                                    'Kiusaaja: ',
+                                  Text(
+                                    AppLocalizations.of(context)!.bully,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
-                                      '${_selectedBully?.name ?? 'Ei valittua henkilöä'}')
+                                      '${_selectedBully?.name ?? AppLocalizations.of(context)?.notReported}')
                                 ],
                               ),
                               const SizedBox(height: 16),

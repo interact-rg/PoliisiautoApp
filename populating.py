@@ -4,8 +4,9 @@ from faker import Faker
 #Creates fake users and organizations for the database, when POST methods are implemented for Students and Teachers those should be added here
 
 #change this depending on where the server is installed
-url = "https://add3.fi/api/v1/register"
 
+url = "https://add3.fi/api/v1/register"
+url_organizations = "https://add3.fi/api/v1/organizations"
 headers = {
     "Accept": "application/json",
 }
@@ -28,8 +29,8 @@ for _ in range(num_users):
         "first_name": fake.first_name(),
         "last_name": fake.last_name(),
         "email": fake.email(),
-        "password": salasana,
-        "password_confirmation": salasana,
+        "password": "salasana",
+        "password_confirmation": "salasana",
         "device_name": fake.word() + " phone",
     }
 
