@@ -34,7 +34,7 @@ as http://localhost:8080 or http://poliisiauto.local. After these steps, you can
 
 | Feedback     | Possible steps  | Steps implemented |
 | :---         |     :---:       |          ---: |
-| Report making overly complex   | Report streamlining, one question at a time. Possibly audio input | Report making streamlined to present one question at a time. |
+| Report making overly complex   | Report streamlining, one question at a time. Possibly audio input | Report making streamlined to present one question at a time. Speech to text button implemented. |
 | Sign out -button hard to find  | Make it visible in frontpage                                      | Made it visible in frontpage                                 |
 | Visual outlook could be better |                                                                   |                                                              |
 
