@@ -29,6 +29,16 @@ PoliisiautoApi api = PoliisiautoApi(host: 'http://poliisiauto.local, version: 'v
 
 As the above snippet shows, you need to provide the API’s hostname and version. The version should match to the API version defined in the server’s API routing file – it can probably be left to v1. The host name should be your PoliisiautoServer’s hostname, such
 as http://localhost:8080 or http://poliisiauto.local. After these steps, you can run and start testing the application.
+
+## Feedback given by kids, and steps to address those
+
+| Feedback     | Possible steps  | Steps implemented |
+| :---         |     :---:       |          ---: |
+| Report making overly complex   | Report streamlining, one question at a time. Possibly audio input | Report making streamlined to present one question at a time. |
+| Sign out -button hard to find  | Make it visible in frontpage                                      | Made it visible in frontpage                                 |
+| Visual outlook could be better |                                                                   |                                                              |
+
+
 ## License
 
 PoliisiautoApp is licensed under a 2-clause BSD license. See [LICENSE](LICENSE) for more details.
