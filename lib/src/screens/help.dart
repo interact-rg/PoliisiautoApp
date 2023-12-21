@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:poliisiauto/src/screens/home.dart';
+
 
 import '../common.dart';
 import '../widgets/drawer.dart';
