@@ -202,7 +202,7 @@ class _MyTextFieldState extends State<NewestReportTextField> {
           TextField(
             readOnly: true,
             decoration: InputDecoration(
-                hintText: 'Report title placeholder',
+                hintText: AppLocalizations.of(context)!.placeholderTitle,
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
@@ -217,7 +217,7 @@ class _MyTextFieldState extends State<NewestReportTextField> {
           TextField(
             readOnly: true,
             decoration: InputDecoration(
-                hintText: 'Date: 12.12.2023, 14.30',
+                hintText: AppLocalizations.of(context)!.placeholderDate,
                 focusedBorder: InputBorder.none,
                 border: InputBorder.none,
                 hintStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
@@ -237,7 +237,7 @@ class _MyTextFieldState extends State<NewestReportTextField> {
             decoration: InputDecoration(
                 focusedBorder: InputBorder.none,
                 hintStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                hintText: 'To: Mrs Jane Doe - Status',
+                hintText: AppLocalizations.of(context)!.placeholderReceiver,
                 contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0)
             ),
             controller: footerController,

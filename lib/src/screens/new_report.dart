@@ -37,11 +37,12 @@ Widget buildBullyField(BuildContext context, List<User> bullyOptions,
           TextFormField(
         controller: controller,
         keyboardType: TextInputType.name,
-            onEditingComplete: () {
-              onFieldSubmitted();
-              // Unfocus the current focus when editing is complete
-              FocusScope.of(context).unfocus();
-            },
+        focusNode: focusNode,
+        onEditingComplete: () {
+          onFieldSubmitted();
+          // Unfocus the current focus when editing is complete
+          FocusScope.of(context).unfocus();
+        },
         maxLength: 100,
         validator: (value) {
           return null;
@@ -302,7 +303,10 @@ class _NewReportScreenState extends State<NewReportScreen> {
         children: [
           if (currentStep > 0)
             OutlinedButton(
-              onPressed: details.onStepCancel,
+              onPressed: () {
+                FocusScope.of(context).unfocus(); // Close the keyboard
+                details.onStepCancel();
+              },
               child: Icon(Icons.arrow_back),
             )
           else
@@ -310,7 +314,10 @@ class _NewReportScreenState extends State<NewReportScreen> {
           const SizedBox(width: 20),
           if (currentStep < 4)
             ElevatedButton(
-              onPressed: details.onStepContinue,
+              onPressed: () {
+                FocusScope.of(context).unfocus(); // Close the keyboard
+                details.onStepContinue();
+              },
               child: Icon(Icons.arrow_forward),
             )
           else
@@ -468,8 +475,10 @@ class _NewReportScreenState extends State<NewReportScreen> {
                                     ),
                                   ),
                                   Text(
-                                      '${_selectedBully?.name ?? AppLocalizations.of(context)?.notReported}')
+                                      '${_selectedBully?.name ?? AppLocalizations.of(context)?.notReported}'),
+
                                 ],
+
                               ),
                               const SizedBox(height: 16),
                               Center(
