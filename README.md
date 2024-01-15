@@ -42,7 +42,19 @@ as http://localhost:8080 or http://poliisiauto.local. After these steps, you can
 
 ![Overview of the application](poliisiapp.png)
 
-
+## Work done by 2023 group
+- New UI design for frontpage
+- New UI design for reporting pipeline
+- Documentation improvements
+- Improvements for help section
+- Improvements for emergency section
+- GitHub pipeline for automated .apk build
+- Generating realistic test data using Python fakerlib (needs to be improved after more post methods have been added)
+## To-Do
+- Add missing post methods
+- Improve realistic test data generation
+- Make it so latest report appears at the front page, currently it has a placeholder text
+- Acquire a server
 ## License
 
 PoliisiautoApp is licensed under a 2-clause BSD license. See [LICENSE](LICENSE) for more details.
