@@ -1,6 +1,9 @@
 import requests
 from faker import Faker
 
+#After changes to server make sure anything here does not need be changed
+#Please run this on your home test server first
+
 #Creates fake users and organizations for the database, when POST methods are implemented for Students and Teachers those should be added here
 
 #change this depending on where the server is installed
