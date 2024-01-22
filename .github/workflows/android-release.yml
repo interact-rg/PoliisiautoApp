@@ -25,8 +25,6 @@ name: Build .apk for Poliisiauto
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
   workflow_dispatch:
 
@@ -50,3 +48,9 @@ jobs:
 
       - name: Start release build
         run: flutter build appbundle
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+            name: upload apk
+            path: build/apk
