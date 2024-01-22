@@ -10,6 +10,14 @@
 
 This project is a client application for [PoliisiautoServer](https://github.com/Spacha/PoliisiautoServer). It is an application where users can report bullying to a trusted adult.
 
+## Demoing the app
+
+Whenever new commits are pushed to master branch, an automated pipeline build an installable .apk file to build/apk. Downloading this .apk file to your (Android) smartphone allows you to install the app for demoing purposes. Steps:
+    1. Download the .apk file to your Android smartphone
+    2. Go to downloads file location on your phone and click the downloaded file.
+    3. You may need to allow installing from unknown sources from your phone's settings. Usually phones prompt you to do this when installing such app.
+    4. App is installed
+
 ## Getting started with development
 
 This project is made using [Flutter](https://docs.flutter.dev/) and is targeted mainly to Android, but should also work on iOS. Flutter offers a good documentation on how to set up a development environment for it. We recommend using Visual Studio Code with Flutter extension(s) since it has proven to be a very well functioning setup. Straight up Android Studio set up with flutter and dart extensions has also been tested and it works.
