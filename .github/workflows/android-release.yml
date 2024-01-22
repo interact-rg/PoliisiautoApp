@@ -47,10 +47,10 @@ jobs:
         run: flutter pub get
 
       - name: Start release build
-        run: flutter build appbundle
+        run: flutter build apk --release
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3.1.0
         with:
             name: upload apk
-            path: build/apk
+            path: build/app/outputs/bundle/release/app-release.apk

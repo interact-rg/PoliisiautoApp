@@ -12,8 +12,9 @@ This project is a client application for [PoliisiautoServer](https://github.com/
 
 ## Demoing the app
 
-Whenever new commits are pushed to master branch, an automated pipeline build an installable .apk file to build/apk. Downloading this .apk file to your (Android) smartphone allows you to install the app for demoing purposes. Steps:
-    1. Download the .apk file to your Android smartphone
+Whenever new commits are pushed to master branch, an automated pipeline will build an installable .apk file to build artifacts. Downloading this .apk file to your (Android) smartphone allows you to install the app for demoing purposes. Steps:
+    1. Find the .apk file by clicking the green check mark above the repository files (screenshot below) .apk file is found in Artifacts -section. Download it.
+    ![Instructions by screenshot](docs/instructions.png)
     2. Go to downloads file location on your phone and click the downloaded file.
     3. You may need to allow installing from unknown sources from your phone's settings. Usually phones prompt you to do this when installing such app.
     4. App is installed
