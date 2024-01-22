@@ -11,8 +11,7 @@ import 'package:http/http.dart' as http;
 import 'data.dart';
 
 /// initialize the global API accessor
-PoliisiautoApi api =
-    PoliisiautoApi(host: 'https://poliisiauto.spacha.dev', version: 'v1');
+PoliisiautoApi api = PoliisiautoApi(host: 'https://add3.fi', version: 'v1');
 
 class PoliisiautoApi {
   final String host;

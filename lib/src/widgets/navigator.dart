@@ -67,9 +67,9 @@ class _PoliisiautoNavigatorState extends State<PoliisiautoNavigator> {
           // Display the app
           //////////////////////////////////////////////////////////////////////
           if (pathTemplate.startsWith('/home') || pathTemplate == '/')
-            const FadeTransitionPage<void>(
-              key: ValueKey('home'),
-              child: HomeScreen(),
+            FadeTransitionPage<void>(
+              key: const ValueKey('home'),
+              child: HomeScreen(routeState: routeState),
             )
           else if (pathTemplate.startsWith('/reports'))
             const FadeTransitionPage<void>(

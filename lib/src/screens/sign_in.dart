@@ -89,6 +89,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             }
 
                             bool success = await _tryLogin(authState);
+
                             if (success) {
                               await routeState.go('/home');
                             } else {

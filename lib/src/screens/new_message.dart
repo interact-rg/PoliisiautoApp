@@ -40,7 +40,7 @@ Widget buildAnonymousField(
         BuildContext context, bool state, ValueSetter<bool?> onChanged) =>
     CheckboxListTile(
       title: Padding(
-          padding: EdgeInsets.only(left: 24),
+          padding: const EdgeInsets.only(left: 24),
           child: Text(AppLocalizations.of(context)!.noName)),
       value: state,
       onChanged: onChanged,
