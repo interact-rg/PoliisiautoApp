@@ -25,6 +25,8 @@ name: Build .apk for Poliisiauto
 on:
   push:
     branches: [ "master" ]
+  pull-request:
+    branches: [ "master" ]
 
   workflow_dispatch:
 
