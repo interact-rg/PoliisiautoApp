@@ -67,8 +67,7 @@ class PoliisiautoApi {
       'email': credentials.email,
       'password': credentials.password,
       'device_name': 'TAMAGOTCHI',
-      // 'api_key': dotenv.get('POLIISIAUTO_API_KEY') // FIXME: Nonstandard way.
-      'api_key': 'Zek1eSpDZv97dYoNL82KHCsHqHF8rTBc' // FIXME: Nonstandard way.
+      'api_key': dotenv.get('POLIISIAUTO_API_KEY')
     });
 
     http.StreamedResponse response = await request.send();
