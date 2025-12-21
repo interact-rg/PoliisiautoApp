@@ -21,6 +21,10 @@ class Message {
   final bool isAnonymous;
   final DateTime? createdAt;
   final String? authorName;
+  final String? type;
+  final double? lat;
+  final double? lon;
+  final String? filePath;
 
   const Message({
     required this.content,
@@ -30,6 +34,10 @@ class Message {
     this.authorId,
     this.createdAt,
     this.authorName,
+    this.type,
+    this.lat,
+    this.lon,
+    this.filePath,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -41,10 +49,14 @@ class Message {
       isAnonymous: json['is_anonymous'] == 1,
       createdAt: DateTime.tryParse(json['created_at'] ?? ''),
       authorName: json['author_name'],
+      type: json['type'],
+      lat: json['lat'] != null ? double.tryParse(json['lat'].toString()) : null,
+      lon: json['lon'] != null ? double.tryParse(json['lon'].toString()) : null,
+      filePath: json['file_path'],
     );
   }
   @override
   String toString() {
-    return 'ReportMessage(id: $id, content: $content, isAnonymous: $isAnonymous, createdAt: $createdAt, reportId: $reportId, authorId: $authorId, authorName: $authorName)';
+    return 'ReportMessage(id: $id, content: $content, isAnonymous: $isAnonymous, createdAt: $createdAt, reportId: $reportId, authorId: $authorId, authorName: $authorName, type: $type, lat: $lat, lon: $lon, filePath: $filePath)';
   }
 }

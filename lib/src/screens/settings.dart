@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../auth.dart';
 import '../widgets/drawer.dart';
+import '../routing.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -55,6 +56,13 @@ class SettingsContent extends StatelessWidget {
                 PoliisiautoAuthScope.of(context).signOut();
               },
               label: const Text('Kirjaudu ulos'),
+            ),
+            const Divider(),
+            ElevatedButton(
+              onPressed: () {
+                RouteStateScope.of(context).go('/tamagotchi_debug');
+              },
+              child: const Text('Open Tamagotchi Debug'),
             ),
           ].map((w) => Padding(padding: const EdgeInsets.all(8), child: w)),
         ],

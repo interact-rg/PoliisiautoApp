@@ -34,28 +34,42 @@ class PoliisiautoAuth extends ChangeNotifier {
   bool get signedIn => _signedIn;
 
   Future<void> signOut() async {
-    //await Future<void>.delayed(const Duration(milliseconds: 200));
+    try {
+      await api.sendLogout();
+    } catch (e) {
+      print('DEBUG: Logout API call failed: $e');
+    }
 
-    _signedIn = !(await api.sendLogout());
+    // Always clear local session
+    await api.deleteToken();
+    _signedIn = false;
+    user = null;
 
     notifyListeners();
   }
 
   Future<bool> signIn(Credentials credentials) async {
+    // START: BYPASS AUTHENTICATION
+    // Original implementation
     //await Future<void>.delayed(const Duration(milliseconds: 200));
 
     String? token = await api.sendLogin(credentials);
+    print('TOKEN: $token');
 
-    if (token == null) {
-      // Login failed, return to the form with a message
-      return false;
+    if (token != null) {
+      api.setToken(token);
+      api.getTokenAsync().then((t) {
+        print('TOKEN SAVED: $t');
+      });
+      return _tryInitializeSession();
     }
 
-    api.setToken(token);
-    // api.getTokenAsync().then((t) {
-    //   print('TOKEN: $t');
-    // });
+    return false;
+    // END: BYPASS AUTHENTICATION
+  }
 
+  Future<bool> signInWithToken(String token) async {
+    api.setToken(token);
     return _tryInitializeSession();
   }
 

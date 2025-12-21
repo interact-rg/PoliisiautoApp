@@ -40,10 +40,8 @@ class SimpleRouterDelegate extends RouterDelegate<ParsedRoute>
 
   @override
   void notifyListeners() {
-    if (routeState != null) {
-      super.notifyListeners();
+    super.notifyListeners();
     }
-  }
 
   @override
   void dispose() {

@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import '../auth.dart';
 import '../widgets/drawer.dart';
+import '../routing.dart';
 import 'send_emergency_report.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +20,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Etusivu')),
+        appBar: AppBar(
+          title: const Text('Etusivu'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                RouteStateScope.of(context).go('/emergency_notifications');
+              },
+            ),
+          ],
+        ),
         drawer: const PoliisiautoDrawer(),
         body: SafeArea(
           child: SingleChildScrollView(

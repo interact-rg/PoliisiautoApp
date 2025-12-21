@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 import 'data.dart';
 
 /// initialize the global API accessor
@@ -20,6 +22,13 @@ class PoliisiautoApi {
   final String version;
   final _storage = const FlutterSecureStorage();
 
+  // Cache for reports and messages
+  List<Report>? _reportsCache;
+  DateTime? _lastFetchTime;
+  final Map<int, List<Message>> _messagesCache = {};
+  final Map<int, DateTime> _messagesCacheTime = {};
+  final Duration _cacheDuration = const Duration(minutes: 5);
+
   PoliisiautoApi({required this.host, required this.version});
 
   //////////////////////////////////////////////////////////////////////////////
@@ -30,20 +39,57 @@ class PoliisiautoApi {
   /// Auth endpoints
   //////////////////////////////////////////////////////////////////////////////
 
+  Future<String?> registerDevice(Map<String, dynamic> data) async {
+    var request = await buildRequest('POST', 'register');
+
+    request.fields.addAll({
+      'first_name': data['first_name'],
+      'last_name': data['last_name'],
+      'email': data['email'],
+      'password': data['password'],
+      'password_confirmation': data['password_confirmation'],
+      'device_name': data['device_name'],
+    });
+
+    http.StreamedResponse response = await request.send();
+
+    if (_isOk(response)) {
+      final body = jsonDecode(await response.stream.bytesToString());
+      return body['access_token'];
+    }
+    return null;
+  }
+
   Future<String?> sendLogin(Credentials credentials) async {
     var request = await buildRequest('POST', 'login');
 
     request.fields.addAll({
       'email': credentials.email,
       'password': credentials.password,
-      'device_name': credentials.deviceName,
-      'api_key': dotenv.get('POLIISIAUTO_API_KEY') // FIXME: Nonstandard way.
+      'device_name': 'TAMAGOTCHI',
+      // 'api_key': dotenv.get('POLIISIAUTO_API_KEY') // FIXME: Nonstandard way.
+      'api_key': 'Zek1eSpDZv97dYoNL82KHCsHqHF8rTBc' // FIXME: Nonstandard way.
     });
 
     http.StreamedResponse response = await request.send();
 
     if (_isOk(response)) {
-      return await response.stream.bytesToString();
+      final respStr = await response.stream.bytesToString();
+      try {
+        final body = jsonDecode(respStr);
+        // Try 'access_token' first (standard), then 'token' (common alternative)
+        final token = body['access_token'] ?? body['token'];
+        if (token != null) return token.toString();
+
+        // If no token field found, maybe it's just the plain string? (Unlikely for API)
+        print(
+            'DEBUG: Login response JSON parsed but no token field found: $body');
+        return respStr;
+      } catch (e) {
+        // Not JSON?
+        print('DEBUG: Login response not JSON: $respStr');
+        return respStr;
+      }
     }
 
     return null;
@@ -62,29 +108,37 @@ class PoliisiautoApi {
   }
 
   Future<Organization> fetchAuthenticatedUserOrganization() async {
-    var request =
-        await buildAuthenticatedRequest('GET', 'profile/organization');
-    http.StreamedResponse response = await request.send();
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/profile/organization');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
 
     if (_isOk(response)) {
-      return Organization.fromJson(
-          jsonDecode(await response.stream.bytesToString()));
+      return Organization.fromJson(jsonDecode(response.body));
     }
 
     throw Exception(
-        'Failed to load authenticated user: $response.reasonPhrase');
+        'Failed to load authenticated user organization (Status: ${response.statusCode}): ${response.body}');
   }
 
   Future<User> fetchAuthenticatedUser() async {
-    var request = await buildAuthenticatedRequest('GET', 'profile');
-    http.StreamedResponse response = await request.send();
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/profile');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
 
     if (_isOk(response)) {
-      return User.fromJson(jsonDecode(await response.stream.bytesToString()));
+      return User.fromJson(jsonDecode(response.body));
     }
 
     throw Exception(
-        'Failed to load authenticated user: $response.reasonPhrase');
+        'Failed to load authenticated user (Status: ${response.statusCode}): ${response.body}');
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -92,25 +146,33 @@ class PoliisiautoApi {
   //////////////////////////////////////////////////////////////////////////////
 
   Future<Organization> fetchOrganization(int organizationId) async {
-    var request =
-        await buildAuthenticatedRequest('GET', 'organizations/$organizationId');
-    http.StreamedResponse response = await request.send();
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/organizations/$organizationId');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
 
     if (_isOk(response)) {
-      return Organization.fromJson(
-          jsonDecode(await response.stream.bytesToString()));
+      return Organization.fromJson(jsonDecode(response.body));
     }
 
-    throw Exception('Request failed: ${await response.stream.bytesToString()}');
+    throw Exception(
+        'Request failed (Status: ${response.statusCode}): ${response.body}');
   }
 
   Future<List<User>> fetchTeachers() async {
-    var request = await buildAuthenticatedRequest('GET', 'teachers');
-    http.StreamedResponse response = await request.send();
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/teachers');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
 
     if (_isOk(response)) {
-      final List<dynamic> teachersJson =
-          jsonDecode(await response.stream.bytesToString());
+      final List<dynamic> teachersJson = jsonDecode(response.body);
 
       List<User> teachers = [];
       for (var t in teachersJson) {
@@ -120,16 +182,21 @@ class PoliisiautoApi {
       return teachers;
     }
 
-    throw Exception('Request failed: ${await response.stream.bytesToString()}');
+    throw Exception(
+        'Request failed (Status: ${response.statusCode}): ${response.body}');
   }
 
   Future<List<User>> fetchStudents() async {
-    var request = await buildAuthenticatedRequest('GET', 'students');
-    http.StreamedResponse response = await request.send();
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/students');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
 
     if (_isOk(response)) {
-      final List<dynamic> studentsJson =
-          jsonDecode(await response.stream.bytesToString());
+      final List<dynamic> studentsJson = jsonDecode(response.body);
 
       List<User> students = [];
       for (var s in studentsJson) {
@@ -139,7 +206,8 @@ class PoliisiautoApi {
       return students;
     }
 
-    throw Exception('Request failed: ${await response.stream.bytesToString()}');
+    throw Exception(
+        'Request failed (Status: ${response.statusCode}): ${response.body}');
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -147,47 +215,78 @@ class PoliisiautoApi {
   //////////////////////////////////////////////////////////////////////////////
 
   Future<List<Report>> fetchReports(
-      {String order = 'DESC', String? route}) async {
-    http.MultipartRequest request;
-    // FIXME: Throws if logged out from '/reports' as teacher
+      {String order = 'DESC', String? route, bool forceRefresh = false}) async {
+    // Check cache
+    if (!forceRefresh &&
+        _reportsCache != null &&
+        _lastFetchTime != null &&
+        DateTime.now().difference(_lastFetchTime!) < _cacheDuration) {
+      print('DEBUG: Returning reports from cache');
+      return _reportsCache!;
+    }
+
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/${route ?? 'reports'}');
+
+    // FIXME: Throws if logged out from '/report' as teacher
     try {
-      request = await buildAuthenticatedRequest('GET', route ?? 'reports');
+      final response = await http.get(uri, headers: {
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      });
+
+      if (_isOk(response)) {
+        final List<dynamic> reportsJson = jsonDecode(response.body);
+
+        List<Report> reports = [];
+        for (var r in reportsJson) {
+          reports.add(Report.fromJson(r));
+        }
+
+        // order the reports by creation date
+        if (order == 'DESC') {
+          reports.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+        } else {
+          reports.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+        }
+
+        // Update cache
+        _reportsCache = reports;
+        _lastFetchTime = DateTime.now();
+
+        return reports;
+      }
     } catch (e) {
       return [];
     }
-    http.StreamedResponse response = await request.send();
 
-    if (_isOk(response)) {
-      final List<dynamic> reportsJson =
-          jsonDecode(await response.stream.bytesToString());
-
-      List<Report> reports = [];
-      for (var r in reportsJson) {
-        reports.add(Report.fromJson(r));
-      }
-
-      // order the reports by creation date
-      if (order == 'DESC') {
-        reports.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
-      } else {
-        reports.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-      }
-
-      return reports;
-    }
-
-    throw Exception('Request failed: ${await response.stream.bytesToString()}');
+    return [];
   }
 
   Future<Report> fetchReport(int reportId) async {
-    var request = await buildAuthenticatedRequest('GET', 'reports/$reportId');
-    http.StreamedResponse response = await request.send();
+    final token = await getTokenAsync();
+    // The user specified that messages/{report_id} helps fetch report details
+    final uri = Uri.parse('$baseAddress/messages/$reportId');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
+
+    print('DEBUG: Response status: ${response.statusCode}');
+    print('DEBUG: Response body: ${response.body}');
 
     if (_isOk(response)) {
-      return Report.fromJson(jsonDecode(await response.stream.bytesToString()));
+      final body = jsonDecode(response.body);
+      // Map 'content' to 'description' if we are treating a Message JSON as a Report
+      if (body['content'] != null && body['description'] == null) {
+        body['description'] = body['content'];
+      }
+      return Report.fromJson(body);
     }
 
-    throw Exception('Request failed: ${await response.stream.bytesToString()}');
+    throw Exception(
+        'Request failed (Status: ${response.statusCode}): ${response.body}');
   }
 
   Future<bool> sendNewReport(Report report) async {
@@ -223,40 +322,116 @@ class PoliisiautoApi {
   /// Message endpoints
   //////////////////////////////////////////////////////////////////////////////
 
-  Future<List<Message>> fetchMessages(int reportId) async {
-    http.MultipartRequest request;
-    request =
-        await buildAuthenticatedRequest('GET', 'reports/$reportId/messages');
-    http.StreamedResponse response = await request.send();
+  Future<List<Message>> fetchMessages(int reportId,
+      {bool forceRefresh = false}) async {
+    // Check cache
+    if (!forceRefresh &&
+        _messagesCache.containsKey(reportId) &&
+        DateTime.now().difference(_messagesCacheTime[reportId]!) <
+            _cacheDuration) {
+      print('DEBUG: Returning messages for report $reportId from cache');
+      return _messagesCache[reportId]!;
+    }
+
+    final token = await getTokenAsync();
+    print('DEBUG: fetchMessages using token: ${token?.substring(0, 10)}...');
+
+    // Check who we are
+    try {
+      final user = await fetchAuthenticatedUser();
+      print(
+          'DEBUG: Current User: ${user.id} (${user.firstName} ${user.lastName}), Role: ${user.role}');
+    } catch (e) {
+      print('DEBUG: Could not fetch user details: $e');
+    }
+
+    // final uri = Uri.parse('$baseAddress/reports/$reportId/messages');
+    final uri = Uri.parse('$baseAddress/messages/$reportId');
+    print('DEBUG: Fetching messages for report $reportId from $uri');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
+    print('DEBUG: Response status: ${response.statusCode}');
 
     if (_isOk(response)) {
-      final List<dynamic> messagesJson =
-          jsonDecode(await response.stream.bytesToString());
+      final decoded = jsonDecode(response.body);
+      List<dynamic> messagesJson;
+      if (decoded is List) {
+        messagesJson = decoded;
+      } else if (decoded is Map) {
+        messagesJson = [decoded];
+      } else {
+        messagesJson = [];
+      }
+
+      print('DEBUG: fetchMessages got ${messagesJson.length} messages');
 
       List<Message> messages = [];
       for (var r in messagesJson) {
-        messages.add(Message.fromJson(r));
+        print('DEBUG: Message JSON: $r'); // Inspect raw JSON
+        final msg = Message.fromJson(r);
+        print(
+            'DEBUG: Parsed Message: type=${msg.type}, filePath=${msg.filePath}');
+        messages.add(msg);
       }
 
       // order the messages by creation date
       messages.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
 
+      // Update cache
+      _messagesCache[reportId] = messages;
+      _messagesCacheTime[reportId] = DateTime.now();
+
       return messages;
     }
 
-    throw Exception('Request failed: ${await response.stream.bytesToString()}');
+    final errorBody = response.body;
+    print(
+        'DEBUG: Error fetching messages (Status: ${response.statusCode}): ${errorBody.length > 500 ? errorBody.substring(0, 500) : errorBody}');
+    throw Exception('Request failed (Status: ${response.statusCode})');
   }
 
-  Future<bool> sendNewMessage(Message message) async {
+  Future<Message> fetchMessage(int messageId) async {
+    final token = await getTokenAsync();
+    final uri = Uri.parse('$baseAddress/messages/$messageId');
+
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
+
+    if (_isOk(response)) {
+      return Message.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception(
+        'Request failed (Status: ${response.statusCode}): ${response.body}');
+  }
+
+  Future<bool> sendNewMessage(Message message, {File? audioFile}) async {
     var request = await buildAuthenticatedRequest(
         'POST', 'reports/${message.reportId}/messages');
 
     request.fields.addAll({
       'content': _stringify(message.content),
       'is_anonymous': _stringify(message.isAnonymous),
-      'report_id': _stringify(message.reportId),
-      'author_id': _stringify(message.authorId)
+      'type': message.type ?? 'text',
     });
+
+    if (message.lat != null) request.fields['lat'] = message.lat.toString();
+    if (message.lon != null) request.fields['lon'] = message.lon.toString();
+
+    if (audioFile != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          audioFile.path,
+          contentType: MediaType('audio', 'wav'), // Adjust extension if needed
+        ),
+      );
+    }
 
     http.StreamedResponse response = await request.send();
 
@@ -291,6 +466,10 @@ class PoliisiautoApi {
   /// Synchronously set token.
   void setToken(String token) {
     setTokenAsync(token).whenComplete(() => null);
+  }
+
+  Future<void> deleteToken() async {
+    await _storage.delete(key: 'bearer_token');
   }
 
   //////////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../auth.dart';
 import '../api.dart';
 import '../data.dart';
@@ -188,52 +189,178 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
           }));
 
   Widget _buildMessageBubbleWidget(Message message) {
-    int currentUserId = getAuth(context).user!.id;
-    bool byCurrentUser = message.authorId == currentUserId;
+    return MessageBubble(
+      message: message,
+      currentUserId: getAuth(context).user!.id,
+      onDelete: () async {
+        if (await _deleteMessage(message.id!) && mounted) {
+          _refreshMessages();
+        }
+      },
+      confirmDelete: (msg) => _confirmDelete(context, msg),
+    );
+  }
+}
+
+class MessageBubble extends StatefulWidget {
+  final Message message;
+  final int currentUserId;
+  final VoidCallback onDelete;
+  final Future<bool?> Function(String) confirmDelete;
+
+  const MessageBubble({
+    super.key,
+    required this.message,
+    required this.currentUserId,
+    required this.onDelete,
+    required this.confirmDelete,
+  });
+
+  @override
+  State<MessageBubble> createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends State<MessageBubble> {
+  late AudioPlayer _audioPlayer;
+  PlayerState _playerState = PlayerState.stopped;
+  bool _isAudio = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAudio =
+        widget.message.type == 'audio' && widget.message.filePath != null;
+    if (_isAudio) {
+      _audioPlayer = AudioPlayer();
+      _audioPlayer.onPlayerStateChanged.listen((state) {
+        if (mounted) {
+          setState(() {
+            _playerState = state;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_isAudio) {
+      _audioPlayer.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _playAudio() async {
+    if (widget.message.filePath == null) return;
+    try {
+      await _audioPlayer.play(UrlSource(widget.message.filePath!));
+    } catch (e) {
+      print("Error playing audio: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Virhe äänitiedoston toistossa')));
+    }
+  }
+
+  Future<void> _stopAudio() async {
+    await _audioPlayer.stop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool byCurrentUser = widget.message.authorId == widget.currentUserId;
 
     return SizedBox(
-        width: double.infinity,
-        child: GestureDetector(
-            onLongPress: () async {
-              if (!byCurrentUser) return;
+      width: double.infinity,
+      child: GestureDetector(
+        onLongPress: () async {
+          if (!byCurrentUser) return;
 
-              bool sure = await _confirmDelete(
-                      context, 'Haluatko varmasti poistaa viestin?') ??
-                  false;
-              if (sure) {
-                if (await _deleteMessage(message.id!) && mounted) {
-                  _refreshMessages();
-                }
-              }
-            },
-            child: Card(
-              color: byCurrentUser ? Colors.green.shade100 : Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                    crossAxisAlignment: byCurrentUser
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
+          bool sure = await widget
+                  .confirmDelete('Haluatko varmasti poistaa viestin?') ??
+              false;
+          if (sure) {
+            widget.onDelete();
+          }
+        },
+        child: Card(
+          color: byCurrentUser ? Colors.green.shade100 : Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: byCurrentUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  byCurrentUser
+                      ? 'Sinä'
+                      : (widget.message.authorName ?? 'Nimetön'),
+                  style: TextStyle(
+                    color: Colors.grey.shade800,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                if (_isAudio) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                          byCurrentUser
-                              ? 'Sinä'
-                              : (message.authorName ?? 'Nimetön'),
-                          style: TextStyle(
-                              color: Colors.grey.shade800,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic)),
-                      Text(
-                        message.content,
-                        textAlign: TextAlign.left,
+                      IconButton(
+                        icon: Icon(
+                          _playerState == PlayerState.playing
+                              ? Icons.stop_circle_outlined
+                              : Icons.play_circle_filled,
+                          size: 32,
+                          color: _playerState == PlayerState.playing
+                              ? Colors.red
+                              : Colors.blue,
+                        ),
+                        onPressed: _playerState == PlayerState.playing
+                            ? _stopAudio
+                            : _playAudio,
                       ),
-                    ]),
-              ),
-            )));
-    /*return ListTile(
-      title: Text(message.content),
-      subtitle: Text('${message.authorName ?? 'Nimetön'}$byMeStr'),
-      tileColor: Colors.,
-    );*/
+                      const SizedBox(width: 8),
+                      Text(
+                        _playerState == PlayerState.playing
+                            ? 'Toistetaan...'
+                            : 'Kuuntele viesti',
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ] else
+                  Text(
+                    widget.message.content,
+                    textAlign: TextAlign.left,
+                  ),
+                if (widget.message.lat != null &&
+                    widget.message.lon != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.location_on,
+                          size: 12, color: Colors.grey),
+                      const SizedBox(width: 2),
+                      Text(
+                        '${widget.message.lat}, ${widget.message.lon}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
