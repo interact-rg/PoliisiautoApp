@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
 import '../auth.dart';
+import '../common.dart';
 import '../data.dart';
 import '../routing.dart';
 import '../widgets/drawer.dart';
@@ -61,23 +61,23 @@ class _ReportsScreenState extends State<ReportsScreen>
     //final routeState = RouteStateScope.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ilmoitukset'),
+        title: Text(AppLocalizations.of(context)!.notifications),
         bottom: isTeacher(context)
             ? TabBar(
                 labelColor: Colors.white,
                 controller: _tabController,
-                tabs: const [
+                tabs: [
                   Tab(
-                    text: 'Osoitetut',
-                    icon: Icon(Icons.school),
+                    text: AppLocalizations.of(context)!.addressed,
+                    icon: const Icon(Icons.school),
                   ),
                   Tab(
-                    text: 'Minun luomat',
-                    icon: Icon(Icons.person),
+                    text: AppLocalizations.of(context)!.createdByMe,
+                    icon: const Icon(Icons.person),
                   ),
                   Tab(
-                    text: 'Kaikki',
-                    icon: Icon(Icons.list),
+                    text: AppLocalizations.of(context)!.all,
+                    icon: const Icon(Icons.list),
                   ),
                 ],
               )

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
 import '../routing.dart';
 import '../auth.dart';
+import '../common.dart';
 
 class PoliisiautoDrawer extends StatelessWidget {
   const PoliisiautoDrawer({super.key});
@@ -32,7 +32,7 @@ class PoliisiautoDrawer extends StatelessWidget {
               color: Color.fromARGB(255, 32, 112, 232),
             ),
             child: Text(
-              'Hei ${getAuth(context).user!.name}!',
+              '${AppLocalizations.of(context)!.hi} ${getAuth(context).user!.name}!',
               style: const TextStyle(color: Colors.white),
               textScaleFactor: 1.5,
               textAlign: TextAlign.center,
@@ -40,7 +40,7 @@ class PoliisiautoDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.house_outlined),
-            title: const Text('Etusivu'),
+            title: Text(AppLocalizations.of(context)!.frontpage),
             iconColor: Colors.white,
             textColor: Colors.white,
             tileColor:
@@ -55,8 +55,8 @@ class PoliisiautoDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.speaker_notes_outlined),
             title: isTeacher(context)
-                ? const Text('Ilmoitukset')
-                : const Text('Minun ilmoitukset'),
+                ? Text(AppLocalizations.of(context)!.notifications)
+                : Text(AppLocalizations.of(context)!.myNotifications),
             iconColor: Colors.white,
             textColor: Colors.white,
             tileColor:
@@ -68,24 +68,10 @@ class PoliisiautoDrawer extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const Text('Apua'),
-            iconColor: Colors.white,
-            textColor: Colors.white,
-            tileColor:
-                (selectedIndex == 2) ? tileHighlightColor : Colors.transparent,
-            onTap: () {
-              // Update the state of the app
-              routeState.go('/help');
-              // Then close the drawer
-              Navigator.pop(context);
-            },
-          ),
           const Divider(color: Color.fromARGB(255, 193, 193, 193)),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Asetukset'),
+            title: Text(AppLocalizations.of(context)!.settings),
             iconColor: Colors.white,
             textColor: Colors.white,
             tileColor:
@@ -99,7 +85,7 @@ class PoliisiautoDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.info_outlined),
-            title: const Text('Tietoa sovelluksesta'),
+            title: Text(AppLocalizations.of(context)!.aboutApp),
             iconColor: Colors.white,
             textColor: Colors.white,
             tileColor:
@@ -114,7 +100,7 @@ class PoliisiautoDrawer extends StatelessWidget {
           const Divider(color: Color.fromARGB(255, 193, 193, 193)),
           ListTile(
             leading: const Icon(Icons.logout_outlined),
-            title: const Text('Kirjaudu ulos'),
+            title: Text(AppLocalizations.of(context)!.logout),
             iconColor: Colors.white,
             textColor: Colors.white,
             onTap: () {

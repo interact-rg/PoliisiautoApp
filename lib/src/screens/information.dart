@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
+import '../common.dart';
 import '../widgets/drawer.dart';
 
 List<Widget> buildCreditWidgets() {
@@ -15,6 +15,18 @@ List<Widget> buildCreditWidgets() {
         style: const TextStyle(fontWeight: FontWeight.bold),
       );
   return [
+    const SizedBox(height: 0),
+    boldText('Software project -kurssi, syksy 2023'),
+    normText('Atte Viertola (projektimanageri)'),
+    normText('Severi Pitkänen'),
+    normText('Aarni Ylitalo'),
+    const SizedBox(height: 0),
+    boldText('Software project -kurssi, kevät 2023'),
+    normText('Muhammad Nabeel Ali (projektimanageri)'),
+    normText('Santeri Yritys'),
+    normText('Li Lan'),
+    normText('Hamza Javed'),
+    normText('Alberto Esquivias'),
     const SizedBox(height: 10),
     boldText('Software project -kurssi, syksy 2022'),
     normText('Miika Sikala (projektimanageri)'),
@@ -54,7 +66,7 @@ class InformationScreen extends StatefulWidget {
 class _InformationScreenState extends State<InformationScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text('Tietoa sovelluksesta')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.aboutApp)),
       drawer: const PoliisiautoDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -90,17 +102,17 @@ class _InformationContentState extends State<InformationContent> {
               width: 140,
             ),
           ),
-          const Text(
-            'Poliisiauto on koululaisten ideoima sovellus, jonka kautta lapset voivat ilmoittaa kiusaamisesta luotettavalle aikuiselle ja aikuiset pystyvät käsittelemään kiusaamistapauksia.\nSovelluksen lähdekoodi on avoin.',
+          Text(
+            AppLocalizations.of(context)!.infoText,
             textAlign: TextAlign.center,
           ),
           const Divider(),
           const SizedBox(height: 20),
           Text(
-            'Kiitokset',
+            AppLocalizations.of(context)!.thanks,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           ...buildCreditWidgets()
         ],
       );

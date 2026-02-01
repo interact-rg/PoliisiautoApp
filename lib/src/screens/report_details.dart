@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
+
 import 'package:audioplayers/audioplayers.dart';
 import '../auth.dart';
 import '../api.dart';
+import '../common.dart';
 import '../data.dart';
 import '../screens/new_message.dart';
 import '../widgets/empty_list.dart';
@@ -44,22 +45,24 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ilmoituksen tiedot'), actions: [
-        // TODO: Hide if the report is not created by the current user!
-        IconButton(
-          onPressed: () async {
-            bool sure = await _confirmDelete(
-                    context, 'Haluatko varmasti poistaa ilmoituksen?') ??
-                false;
-            if (sure) {
-              if (await _deleteReport() && mounted) {
-                Navigator.pop(context, 'report_deleted');
-              }
-            }
-          },
-          icon: const Icon(Icons.delete_outline),
-        ),
-      ]),
+      appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.reportInformation),
+          actions: [
+            // TODO: Hide if the report is not created by the current user!
+            IconButton(
+              onPressed: () async {
+                bool sure = await _confirmDelete(
+                        context, 'Haluatko varmasti poistaa ilmoituksen?') ??
+                    false;
+                if (sure) {
+                  if (await _deleteReport() && mounted) {
+                    Navigator.pop(context, 'report_deleted');
+                  }
+                }
+              },
+              icon: const Icon(Icons.delete_outline),
+            ),
+          ]),
       body: FutureBuilder<Report>(
           future: _futureReport,
           builder: (context, snapshot) {
@@ -67,19 +70,22 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
               return ListView(
                 children: [
                   const SizedBox(height: 6),
-                  _buildField('Ilmoituksen kuvaus',
+                  _buildField(AppLocalizations.of(context)!.reportDescription,
                       content: snapshot.data!.description),
                   const Divider(color: Color.fromARGB(255, 193, 193, 193)),
-                  _buildField('Ilmoittaja',
-                      content: snapshot.data!.reporterName ?? '(nimetön)'),
+                  _buildField(AppLocalizations.of(context)!.author,
+                      content: snapshot.data!.reporterName ??
+                          AppLocalizations.of(context)!.author),
                   const Divider(color: Color.fromARGB(255, 193, 193, 193)),
-                  _buildField('Kiusaaja',
-                      content: snapshot.data!.bullyName ?? '(ei ilmoitettu)'),
+                  _buildField(AppLocalizations.of(context)!.bully,
+                      content: snapshot.data!.bullyName ??
+                          AppLocalizations.of(context)!.notReported),
                   const Divider(color: Color.fromARGB(255, 193, 193, 193)),
-                  _buildField('Kiusattu',
-                      content: snapshot.data!.bulliedName ?? '(ei ilmoitettu)'),
+                  _buildField(AppLocalizations.of(context)!.victim,
+                      content: snapshot.data!.bulliedName ??
+                          AppLocalizations.of(context)!.notReported),
                   const Divider(color: Color.fromARGB(255, 193, 193, 193)),
-                  _buildField('Viestit',
+                  _buildField(AppLocalizations.of(context)!.messages,
                       child: _buildMessagesWidget(_futureMessages)),
                   //const Divider(color: Color.fromARGB(255, 193, 193, 193)),
                   Padding(
@@ -91,7 +97,7 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
                         onPressed: () => _openNewMessageScreen(
                             context, snapshot.data!.isAnonymous),
                         icon: const Icon(Icons.message_outlined),
-                        label: const Text('Lähetä viesti'),
+                        label: Text(AppLocalizations.of(context)!.sendMessage),
                       ),
                     ),
                   )

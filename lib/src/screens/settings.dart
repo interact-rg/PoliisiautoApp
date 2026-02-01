@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
-
 import '../auth.dart';
+import '../common.dart';
+import '../locale_provider.dart';
 import '../widgets/drawer.dart';
-import '../routing.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -18,53 +18,72 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  Locale? selectedLocale;
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Asetukset')),
-        drawer: const PoliisiautoDrawer(),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: double.infinity),
-                child: const SettingsContent(),
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedLocale = Localizations.localeOf(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.settings)),
+      drawer: const PoliisiautoDrawer(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: double.infinity),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(AppLocalizations.of(context)!.mySettings,
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context)!.language,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButton<Locale>(
+                      value: selectedLocale,
+                      onChanged: (Locale? newValue) async {
+                        setState(() {
+                          selectedLocale = newValue;
+                        });
+                        LocaleProvider.of(context)!.setLocale(selectedLocale!);
+                      },
+                      items: LocaleProvider.supportedLocales
+                          .map<DropdownMenuItem<Locale>>((Locale locale) {
+                        return DropdownMenuItem<Locale>(
+                          value: locale,
+                          child: locale.languageCode == 'fi'
+                              ? Text(AppLocalizations.of(context)!.fi)
+                              : Text(AppLocalizations.of(context)!.en),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.logout_outlined),
+                      onPressed: () {
+                        PoliisiautoAuthScope.of(context).signOut();
+                      },
+                      label: Text(AppLocalizations.of(context)!.logout),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      );
-}
-
-class SettingsContent extends StatelessWidget {
-  const SettingsContent({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          ...[
-            Text(
-              'Minun asetukset',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const Text('Ei vielä implementoitu.'),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.logout_outlined),
-              onPressed: () {
-                PoliisiautoAuthScope.of(context).signOut();
-              },
-              label: const Text('Kirjaudu ulos'),
-            ),
-            const Divider(),
-            ElevatedButton(
-              onPressed: () {
-                RouteStateScope.of(context).go('/tamagotchi_debug');
-              },
-              child: const Text('Open Tamagotchi Debug'),
-            ),
-          ].map((w) => Padding(padding: const EdgeInsets.all(8), child: w)),
-        ],
-      );
+      ),
+    );
+  }
 }

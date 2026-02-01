@@ -67,7 +67,26 @@ android {
         }
     }
 }
+task wrapper(type: Wrapper){
+    gradleVersion = '7.5'
+}
 
+task prepareKotlinBuildScriptModel {
+
+}
 flutter {
     source '../..'
+}
+
+dependencies {
+    implementation 'com.android.support:multidex:2.0.1' //enter the latest multidex version
+}
+android {
+    defaultConfig {
+        multiDexEnabled true
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

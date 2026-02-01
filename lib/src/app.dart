@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:poliisiauto/src/locale_provider.dart';
+
 import 'auth.dart';
+import 'common.dart';
 import 'routing.dart';
 import 'widgets/navigator.dart';
 
@@ -95,33 +98,57 @@ class _PoliisiautoAppState extends State<PoliisiautoApp> {
   }
 
   @override
-  Widget build(BuildContext context) => RouteStateScope(
-        notifier: _routeState,
-        child: PoliisiautoAuthScope(
-          notifier: _auth,
-          child: MaterialApp.router(
-            routerDelegate: _routerDelegate,
-            routeInformationParser: _routeParser,
-            // Revert back to pre-Flutter-2.5 transition behavior:
-            // https://github.com/flutter/flutter/issues/82053
-            theme: ThemeData(
-              appBarTheme: const AppBarTheme(
-                  backgroundColor: primaryColor, centerTitle: true),
-              primaryColor: primaryColor,
-              elevatedButtonTheme: const ElevatedButtonThemeData(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll<Color>(primaryColor))),
-              pageTransitionsTheme: const PageTransitionsTheme(
-                builders: {
-                  TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-                },
+  Widget build(BuildContext context) {
+    return RouteStateScope(
+      notifier: _routeState,
+      child: PoliisiautoAuthScope(
+        notifier: _auth,
+        child: MaterialApp.router(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            AppLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''), // English
+            Locale('fi', ''), // Finnish
+          ],
+          locale: LocaleProvider.of(context)?.locale,
+          routerDelegate: _routerDelegate,
+          routeInformationParser: _routeParser,
+          // Revert back to pre-Flutter-2.5 transition behavior:
+          // https://github.com/flutter/flutter/issues/82053
+          theme: ThemeData(
+            scaffoldBackgroundColor: const Color.fromARGB(255, 225, 248, 255),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: primaryColor,
+              centerTitle: true,
+              iconTheme: IconThemeData(color: Color.fromARGB(255, 47, 128, 237)
+),
+            ),
+            primaryColor: primaryColor,
+            elevatedButtonTheme: const ElevatedButtonThemeData(
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(primaryColor),
               ),
             ),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              },
+            ),
           ),
+          builder: (BuildContext context, Widget? child) {
+            return LocaleProvider(
+              child: child!,
+            );
+          },
         ),
-      );
+      ),
+    );
+  }
 
   Future<ParsedRoute> _guard(ParsedRoute from) async {
     final signedIn = _auth.signedIn;

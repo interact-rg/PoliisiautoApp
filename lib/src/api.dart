@@ -81,12 +81,10 @@ class PoliisiautoApi {
         if (token != null) return token.toString();
 
         // If no token field found, maybe it's just the plain string? (Unlikely for API)
-        print(
-            'DEBUG: Login response JSON parsed but no token field found: $body');
+        
         return respStr;
       } catch (e) {
         // Not JSON?
-        print('DEBUG: Login response not JSON: $respStr');
         return respStr;
       }
     }
@@ -220,7 +218,7 @@ class PoliisiautoApi {
         _reportsCache != null &&
         _lastFetchTime != null &&
         DateTime.now().difference(_lastFetchTime!) < _cacheDuration) {
-      print('DEBUG: Returning reports from cache');
+  
       return _reportsCache!;
     }
 
@@ -274,8 +272,7 @@ class PoliisiautoApi {
       'Authorization': 'Bearer $token',
     });
 
-    print('DEBUG: Response status: ${response.statusCode}');
-    print('DEBUG: Response body: ${response.body}');
+   
 
     if (_isOk(response)) {
       final body = jsonDecode(response.body);
@@ -330,7 +327,6 @@ class PoliisiautoApi {
         _messagesCache.containsKey(reportId) &&
         DateTime.now().difference(_messagesCacheTime[reportId]!) <
             _cacheDuration) {
-      print('DEBUG: Returning messages for report $reportId from cache');
       return _messagesCache[reportId]!;
     }
 
@@ -349,13 +345,12 @@ class PoliisiautoApi {
 
     // final uri = Uri.parse('$baseAddress/reports/$reportId/messages');
     final uri = Uri.parse('$baseAddress/reports/$reportId/messages');
-    print('DEBUG: Fetching messages for report $reportId from $uri');
+ 
 
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-    print('DEBUG: Response status: ${response.statusCode}');
 
     if (_isOk(response)) {
       final decoded = jsonDecode(response.body);
@@ -368,14 +363,10 @@ class PoliisiautoApi {
         messagesJson = [];
       }
 
-      print('DEBUG: fetchMessages got ${messagesJson.length} messages');
 
       List<Message> messages = [];
       for (var r in messagesJson) {
-        print('DEBUG: Message JSON: $r'); // Inspect raw JSON
         final msg = Message.fromJson(r);
-        print(
-            'DEBUG: Parsed Message: type=${msg.type}, filePath=${msg.filePath}');
         messages.add(msg);
       }
 
@@ -389,9 +380,7 @@ class PoliisiautoApi {
       return messages;
     }
 
-    final errorBody = response.body;
-    print(
-        'DEBUG: Error fetching messages (Status: ${response.statusCode}): ${errorBody.length > 500 ? errorBody.substring(0, 500) : errorBody}');
+    // final errorBody = response.body;
     throw Exception('Request failed (Status: ${response.statusCode})');
   }
 
@@ -526,7 +515,6 @@ class PoliisiautoApi {
   }
 
   void _dbgPrintResponse(http.StreamedResponse response) async {
-    print(
-        'Error ${response.statusCode}: ${jsonDecode(await response.stream.bytesToString())}');
+    
   }
 }

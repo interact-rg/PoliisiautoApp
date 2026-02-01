@@ -40,8 +40,10 @@ class SimpleRouterDelegate extends RouterDelegate<ParsedRoute>
 
   @override
   void notifyListeners() {
+
     super.notifyListeners();
-    }
+    
+}
 
   @override
   void dispose() {

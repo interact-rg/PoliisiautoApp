@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:flutter/material.dart';
 import 'package:poliisiauto/src/auth.dart';
+import '../common.dart';
 import '../data.dart';
 import '../api.dart';
 
@@ -28,10 +28,10 @@ Widget buildMessageField(
         }
         return null;
       },
-      decoration: const InputDecoration(
-        icon: Icon(Icons.chat_outlined),
-        hintText: 'Kirjoita viesti',
-        labelText: 'Viestin sisältö',
+      decoration: InputDecoration(
+        icon: const Icon(Icons.chat_outlined),
+        hintText: AppLocalizations.of(context)!.writeMessage,
+        labelText: AppLocalizations.of(context)!.messageContent,
       ),
     );
 
@@ -39,9 +39,9 @@ Widget buildMessageField(
 Widget buildAnonymousField(
         BuildContext context, bool state, ValueSetter<bool?> onChanged) =>
     CheckboxListTile(
-      title: const Padding(
-          padding: EdgeInsets.only(left: 24),
-          child: Text('En halua että opettaja tietää nimeni')),
+      title: Padding(
+          padding: const EdgeInsets.only(left: 24),
+          child: Text(AppLocalizations.of(context)!.noName)),
       value: state,
       onChanged: onChanged,
     );
@@ -84,7 +84,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Lähetä viesti')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.sendMessage)),
         resizeToAvoidBottomInset: false,
         body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -114,7 +114,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                           // Process data.
                           _submitForm();
                         },
-                        child: const Text('Lähetä'),
+                        child: Text(AppLocalizations.of(context)!.send),
                       ),
                     ),
                   ),
