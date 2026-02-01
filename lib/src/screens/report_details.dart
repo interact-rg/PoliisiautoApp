@@ -181,6 +181,18 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
                       ),
                     );
             } else if (snapshot.hasError) {
+              if (snapshot.error.toString().contains('Status: 403')) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      'Pääsy evätty. Vain opettajat voivat nähdä viestit.',
+                      style: TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
               return Text('${snapshot.error}');
             }
 
@@ -253,7 +265,11 @@ class _MessageBubbleState extends State<MessageBubble> {
   Future<void> _playAudio() async {
     if (widget.message.filePath == null) return;
     try {
-      await _audioPlayer.play(UrlSource(widget.message.filePath!));
+      String url = widget.message.filePath!;
+      if (url.startsWith('http://')) {
+        url = url.replaceFirst('http://', 'https://');
+      }
+      await _audioPlayer.play(UrlSource(url));
     } catch (e) {
       print("Error playing audio: $e");
       ScaffoldMessenger.of(context).showSnackBar(

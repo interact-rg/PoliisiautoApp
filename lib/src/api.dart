@@ -224,14 +224,15 @@ class PoliisiautoApi {
       return _reportsCache!;
     }
 
-    final token = await getTokenAsync();
+    // final token = await getTokenAsync();
+    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
     final uri = Uri.parse('$baseAddress/${route ?? 'reports'}');
 
     // FIXME: Throws if logged out from '/report' as teacher
     try {
       final response = await http.get(uri, headers: {
         'Accept': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $token',
       });
 
       if (_isOk(response)) {
@@ -263,13 +264,14 @@ class PoliisiautoApi {
   }
 
   Future<Report> fetchReport(int reportId) async {
-    final token = await getTokenAsync();
+    // final token = await getTokenAsync();
+    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
     // The user specified that messages/{report_id} helps fetch report details
-    final uri = Uri.parse('$baseAddress/messages/$reportId');
+    final uri = Uri.parse('$baseAddress/reports/$reportId');
 
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer $token',
     });
 
     print('DEBUG: Response status: ${response.statusCode}');
@@ -332,25 +334,26 @@ class PoliisiautoApi {
       return _messagesCache[reportId]!;
     }
 
-    final token = await getTokenAsync();
-    print('DEBUG: fetchMessages using token: ${token?.substring(0, 10)}...');
+    // final token = await getTokenAsync();
+    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
+    // print('DEBUG: fetchMessages using token: token');
 
-    // Check who we are
-    try {
-      final user = await fetchAuthenticatedUser();
-      print(
-          'DEBUG: Current User: ${user.id} (${user.firstName} ${user.lastName}), Role: ${user.role}');
-    } catch (e) {
-      print('DEBUG: Could not fetch user details: $e');
-    }
+    // // Check who we are
+    // try {
+    //   final user = await fetchAuthenticatedUser();
+    //   print(
+    //       'DEBUG: Current User: ${user.id} (${user.firstName} ${user.lastName}), Role: ${user.role}');
+    // } catch (e) {`
+    //   print('DEBUG: Could not fetch user details: $e');
+    // }
 
     // final uri = Uri.parse('$baseAddress/reports/$reportId/messages');
-    final uri = Uri.parse('$baseAddress/messages/$reportId');
+    final uri = Uri.parse('$baseAddress/reports/$reportId/messages');
     print('DEBUG: Fetching messages for report $reportId from $uri');
 
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer $token',
     });
     print('DEBUG: Response status: ${response.statusCode}');
 
@@ -393,12 +396,13 @@ class PoliisiautoApi {
   }
 
   Future<Message> fetchMessage(int messageId) async {
-    final token = await getTokenAsync();
+    // final token = await getTokenAsync();
+    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
     final uri = Uri.parse('$baseAddress/messages/$messageId');
 
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer $token',
     });
 
     if (_isOk(response)) {
@@ -503,7 +507,9 @@ class PoliisiautoApi {
   }
 
   /// Get the base address of the API.
-  String get baseAddress => '$host/api/$version';
+  // String get baseAddress => '$host/api/$version';
+  // Hardcoded for development as requested
+  String get baseAddress => 'https://poliisiautoweb.onrender.com/api/v1';
 
   /// Return true if given response is successful.
   bool _isOk(http.BaseResponse response) =>

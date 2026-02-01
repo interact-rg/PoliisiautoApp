@@ -27,7 +27,7 @@ class _EmergencyNotificationsScreenState
   @override
   void initState() {
     super.initState();
-    _fetchAlerts();
+    _fetchAlerts(forceRefresh: true);
   }
 
   Future<void> _fetchAlerts({bool forceRefresh = false}) async {
@@ -66,6 +66,7 @@ class _EmergencyNotificationsScreenState
             // If we found both, valid.
           }
         } catch (e) {
+          // If 403 or other error, we just continue without messages/location
           print('Error fetching messages for report ${report.id}: $e');
         }
 
@@ -175,7 +176,11 @@ class _EmergencyAlertCardState extends State<EmergencyAlertCard> {
     if (widget.alert.audioUrl == null) return;
 
     try {
-      await _audioPlayer.play(UrlSource(widget.alert.audioUrl!));
+      String url = widget.alert.audioUrl!;
+      if (url.startsWith('http://')) {
+        url = url.replaceFirst('http://', 'https://');
+      }
+      await _audioPlayer.play(UrlSource(url));
     } catch (e) {
       print("Error playing audio: $e");
       ScaffoldMessenger.of(context).showSnackBar(

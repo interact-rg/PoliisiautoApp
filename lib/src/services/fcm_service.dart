@@ -70,6 +70,7 @@ class FCMService {
   }
 
   // Handle Background Messages
+  @pragma('vm:entry-point')
   static Future<void> firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     // If you're going to use other Firebase services in the background, such as Firestore,
