@@ -59,7 +59,7 @@ dependencies:
 
 
   #speech-to-text
-  speech_to_text: ^6.5.1
+  speech_to_text: ^7.3.0
 
 dev_dependencies:
   integration_test:
