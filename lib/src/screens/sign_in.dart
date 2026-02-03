@@ -159,7 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             TextButton(
                               onPressed: () async {
                                 bool success = await authState.signInWithToken(
-                                    '12|8LC2JBGhmPbai4tzPMfOvd7jiVpmXi03apJv81ZR15adac3d');
+                                    '9|fMkRe03NahrpR14lXgYATlNAlB48rW96ucBKjZgG58291aa5');
                                 if (success) {
                                   routeState.go('/home');
                                 } else {
@@ -250,6 +250,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   String _getDeviceName() {
     // TODO: Get or ask actual name
-    return 'Android';
+    return 'Tamagotchi-008';
   }
 }
