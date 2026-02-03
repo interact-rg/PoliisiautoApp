@@ -158,8 +158,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           children: [
                             TextButton(
                               onPressed: () async {
-                                bool success = await authState.signInWithToken(
-                                    '9|fMkRe03NahrpR14lXgYATlNAlB48rW96ucBKjZgG58291aa5');
+                                bool success =
+                                    await authState.signInWithToken("apitoken");
                                 if (success) {
                                   routeState.go('/home');
                                 } else {

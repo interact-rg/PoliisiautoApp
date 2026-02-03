@@ -54,7 +54,7 @@ class PoliisiautoAuth extends ChangeNotifier {
     //await Future<void>.delayed(const Duration(milliseconds: 200));
 
     // String? token =await api.sendLogin(credentials);
-    String? token = "9|fMkRe03NahrpR14lXgYATlNAlB48rW96ucBKjZgG58291aa5";
+    String? token = "apitoken";
 
     print('TOKEN: $token');
 
