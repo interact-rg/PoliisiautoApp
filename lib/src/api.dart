@@ -66,7 +66,7 @@ class PoliisiautoApi {
     request.fields.addAll({
       'email': credentials.email,
       'password': credentials.password,
-      'device_name': 'TAMAGOTCHI',
+      'device_name': credentials.deviceName,
       'api_key': dotenv.get('POLIISIAUTO_API_KEY')
     });
 
@@ -222,8 +222,7 @@ class PoliisiautoApi {
       return _reportsCache!;
     }
 
-    // final token = await getTokenAsync();
-    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
+    final token = await getTokenAsync();
     final uri = Uri.parse('$baseAddress/${route ?? 'reports'}');
 
     // FIXME: Throws if logged out from '/report' as teacher
@@ -262,9 +261,7 @@ class PoliisiautoApi {
   }
 
   Future<Report> fetchReport(int reportId) async {
-    // final token = await getTokenAsync();
-    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
-    // The user specified that messages/{report_id} helps fetch report details
+    final token = await getTokenAsync();
     final uri = Uri.parse('$baseAddress/reports/$reportId');
 
     final response = await http.get(uri, headers: {
@@ -330,8 +327,7 @@ class PoliisiautoApi {
       return _messagesCache[reportId]!;
     }
 
-    // final token = await getTokenAsync();
-    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
+    final token = await getTokenAsync();
     // print('DEBUG: fetchMessages using token: token');
 
     // // Check who we are
@@ -385,8 +381,7 @@ class PoliisiautoApi {
   }
 
   Future<Message> fetchMessage(int messageId) async {
-    // final token = await getTokenAsync();
-    const token = "21|YJXRRy2zMq3RPzadkxnYlTduexd8DX1mxt7mtjs68ab466da";
+    final token = await getTokenAsync();
     final uri = Uri.parse('$baseAddress/messages/$messageId');
 
     final response = await http.get(uri, headers: {
@@ -495,10 +490,7 @@ class PoliisiautoApi {
     return buildRequest(method, endpoint, headers: headers);
   }
 
-  /// Get the base address of the API.
-  // String get baseAddress => '$host/api/$version';
-  // Hardcoded for development as requested
-  String get baseAddress => 'https://poliisiautoweb.onrender.com/api/v1';
+  String get baseAddress => '$host/api/$version';
 
   /// Return true if given response is successful.
   bool _isOk(http.BaseResponse response) =>

@@ -43,6 +43,7 @@ dependencies:
   http: ^1.1.2
   firebase_core: ^2.4.1
   firebase_messaging: ^14.2.1
+  http_parser: ^4.0.0
 
   # Routing packages
   url_strategy: ^0.2.0

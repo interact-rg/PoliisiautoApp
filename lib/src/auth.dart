@@ -53,18 +53,20 @@ class PoliisiautoAuth extends ChangeNotifier {
     // Original implementation
     //await Future<void>.delayed(const Duration(milliseconds: 200));
 
-    String? token = await api.sendLogin(credentials);
+    // String? token =await api.sendLogin(credentials);
+    String? token = "9|fMkRe03NahrpR14lXgYATlNAlB48rW96ucBKjZgG58291aa5";
+
     print('TOKEN: $token');
 
-    if (token != null) {
-      api.setToken(token);
-      api.getTokenAsync().then((t) {
-        print('TOKEN SAVED: $t');
-      });
-      return _tryInitializeSession();
-    }
+    // if (token != null) {
+    api.setToken(token);
+    api.getTokenAsync().then((t) {
+      print('TOKEN SAVED: $t');
+    });
+    return _tryInitializeSession();
+    // }
 
-    return false;
+    // return false;
     // END: BYPASS AUTHENTICATION
   }
 
