@@ -12,10 +12,15 @@ import 'common.dart';
 import 'routing.dart';
 import 'widgets/navigator.dart';
 
+import 'services/fcm_service.dart';
+import 'api.dart';
+import 'data.dart';
+
 const primaryColor = Color.fromARGB(255, 112, 162, 237);
 
 class PoliisiautoApp extends StatefulWidget {
-  const PoliisiautoApp({super.key});
+  final FCMService? fcmService;
+  const PoliisiautoApp({super.key, this.fcmService});
 
   @override
   State<PoliisiautoApp> createState() => _PoliisiautoAppState();
@@ -46,6 +51,8 @@ class _PoliisiautoAppState extends State<PoliisiautoApp> {
         '/help',
         '/information',
         '/settings',
+        '/emergency_notifications',
+        '/tamagotchi_debug',
       ],
       guard: _guard,
       initialRoute: '/splash',
@@ -63,6 +70,29 @@ class _PoliisiautoAppState extends State<PoliisiautoApp> {
 
     // Listen for when the user logs out and display the signin screen.
     _auth.addListener(_handleAuthStateChanged);
+
+    // Listen to notification clicks
+    widget.fcmService?.onMessageOpened.listen((data) async {
+      print('DEBUG: Notification data received: $data');
+
+      String? messageIdStr = data['message_id']?.toString();
+      if (messageIdStr != null) {
+        try {
+          int messageId = int.parse(messageIdStr);
+          // Fetch message to get reportId
+          Message msg = await api.fetchMessage(messageId);
+          print(
+              'DEBUG: Navigating to report ${msg.reportId} from message $messageId');
+          _routeState.go('/reports/${msg.reportId}');
+          return;
+        } catch (e) {
+          print('DEBUG: Failed to navigate from notification message_id: $e');
+        }
+      }
+
+      // Fallback: go to emergency notifications
+      _routeState.go('/emergency_notifications');
+    });
 
     super.initState();
   }

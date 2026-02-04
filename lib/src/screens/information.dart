@@ -16,6 +16,11 @@ List<Widget> buildCreditWidgets() {
       );
   return [
     const SizedBox(height: 0),
+    boldText('Software project -kurssi, syksy 2025'),
+    normText('Jalal Ghaffar (projektimanageri)'),
+    normText('Juho Hummasti'),
+    normText('Haseeb Ur Rehman'),
+    const SizedBox(height: 0),
     boldText('Software project -kurssi, syksy 2023'),
     normText('Atte Viertola (projektimanageri)'),
     normText('Severi Pitkänen'),

@@ -9,6 +9,7 @@ import '../common.dart';
 import '../locale_provider.dart';
 import '../widgets/drawer.dart';
 
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -47,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(height: 16),
                     Text(
                       AppLocalizations.of(context)!.language,
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
                     DropdownButton<Locale>(

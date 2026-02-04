@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import 'package:poliisiauto/src/auth.dart';
+import '../auth.dart';
 import '../common.dart';
 import '../data.dart';
 import '../api.dart';
-import 'package:flutter/material.dart';
+
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:speech_to_text/speech_recognition_result.dart';
 
@@ -353,9 +353,9 @@ class _NewReportScreenState extends State<NewReportScreen> {
                         onStepCancel: cancelStep,
                         currentStep: currentStep, //0, 1, 2, 3, 4
                         connectorColor:
-                            MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.disabled)) {
+                            WidgetStateProperty.resolveWith<Color>(
+                                (Set<WidgetState> states) {
+                          if (states.contains(WidgetState.disabled)) {
                             return Colors.grey; // Color when disabled
                           }
                           return Colors.blueAccent; // Color when activated

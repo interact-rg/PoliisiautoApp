@@ -14,6 +14,8 @@ import '../screens/reports.dart';
 import '../screens/help.dart';
 import '../screens/information.dart';
 import '../screens/settings.dart';
+import '../screens/emergency_notifications.dart';
+import '../screens/tamagotchi_debug.dart';
 
 /// Builds the top-level navigator for the app. The pages to display are based
 /// on the `routeState` that was parsed by the TemplateRouteParser.
@@ -90,6 +92,16 @@ class _PoliisiautoNavigatorState extends State<PoliisiautoNavigator> {
             const FadeTransitionPage<void>(
               key: ValueKey('settings'),
               child: SettingsScreen(),
+            )
+          else if (pathTemplate.startsWith('/emergency_notifications'))
+            const FadeTransitionPage<void>(
+              key: ValueKey('emergency_notifications'),
+              child: EmergencyNotificationsScreen(),
+            )
+          else if (pathTemplate.startsWith('/tamagotchi_debug'))
+            const FadeTransitionPage<void>(
+              key: ValueKey('tamagotchi_debug'),
+              child: TamagotchiDebugScreen(),
             )
 
           // Avoid building a Navigator with an empty `pages` list when the

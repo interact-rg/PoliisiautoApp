@@ -3,7 +3,7 @@ description: An application where users can report bullying to a trusted adult.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.18.1 <3.0.0'
+  sdk: ">=2.18.1 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -32,7 +32,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -42,20 +41,26 @@ dependencies:
   quiver: ^3.1.0
   flutter_secure_storage: ^9.0.0
   http: ^1.1.2
+  firebase_core: ^2.4.1
+  firebase_messaging: ^14.2.1
+  http_parser: ^4.0.0
 
   # Routing packages
   url_strategy: ^0.2.0
   path_to_regexp: ^0.4.0
-  url_launcher: ^6.1.6
+  url_launcher: ^6.3.0
   adaptive_navigation: ^0.0.7
+  flutter_dotenv: ^5.1.0
+  audioplayers: ^6.5.1
   
-  #Localization
+  # Localization
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: ^0.20.2
+
 
   #speech-to-text
-  speech_to_text: ^6.5.1
+  speech_to_text: ^7.3.0
 
 dev_dependencies:
   integration_test:
@@ -87,6 +92,7 @@ flutter:
   assets:
     - assets/logo-text-2x.png
     - assets/logo-2x.png
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -113,3 +119,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+dependency_overrides:
+  file: ^7.0.0

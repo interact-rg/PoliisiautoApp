@@ -9,6 +9,7 @@ import '../common.dart';
 import '../routing.dart';
 import '../data.dart';
 import 'forgot_password.dart';
+import 'register.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({
@@ -41,7 +42,8 @@ class _SignInScreenState extends State<SignInScreen> {
               padding: const EdgeInsets.all(20),
               child: Form(
                   key: _formKey,
-                  child: Column(
+                  child: SingleChildScrollView(
+                      child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -84,14 +86,13 @@ class _SignInScreenState extends State<SignInScreen> {
                         padding: const EdgeInsets.all(0),
                         child: TextButton(
                           onPressed: () async {
-                            if (!_formKey.currentState!.validate()) {
-                              return;
-                            }
+                            // if (!!_formKey.currentState!.validate()) {
+                            //   return;
+                            // }
 
                             bool success = await _tryLogin(authState);
-
                             if (success) {
-                              await routeState.go('/home');
+                              routeState.go('/home');
                             } else {
                               showDialog(
                                   context: context,
@@ -125,9 +126,52 @@ class _SignInScreenState extends State<SignInScreen> {
                               AppLocalizations.of(context)!.forgotPassword),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(0),
+                        child: TextButton(
+                          onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RegisterScreen())),
+                          child: const Text('Rekisteröidy (Uusi käyttäjä)',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
 
                       /// Debug:
                       const Divider(),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                _emailController.text = 'device008@example.com';
+                                _passwordController.text = 'securepassword';
+                              },
+                              key: const ValueKey("debug teacher"),
+                              child: const Text('Device 008. (opettaja)',
+                                  style: TextStyle(color: Colors.orange)),
+                            ),
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                bool success =
+                                    await authState.signInWithToken("apitoken");
+                                if (success) {
+                                  routeState.go('/home');
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Token login failed')));
+                                }
+                              },
+                              child: const Text('Login with Token (Device 001)',
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ]),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -186,7 +230,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ],
                       ) // Debug ends
                     ],
-                  )),
+                  ))),
             ),
           ]),
     );
@@ -206,6 +250,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   String _getDeviceName() {
     // TODO: Get or ask actual name
-    return 'Android';
+    return 'Tamagotchi-008';
   }
 }
